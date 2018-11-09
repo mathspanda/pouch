@@ -225,7 +225,7 @@ func (c *CriManager) Version(ctx context.Context, r *runtime.VersionRequest) (*r
 // RunPodSandbox creates and starts a pod-level sandbox. Runtimes should ensure
 // the sandbox is in ready state.
 func (c *CriManager) RunPodSandbox(ctx context.Context, r *runtime.RunPodSandboxRequest) (_ *runtime.RunPodSandboxResponse, retErr error) {
-	label := "run"
+	label := util_metrics.ActionRunLabel
 	metrics.PodActionsCounter.WithLabelValues(label).Inc()
 	defer func(start time.Time) {
 		metrics.PodActionsTimer.WithLabelValues(label).Observe(time.Since(start).Seconds())
@@ -336,7 +336,7 @@ func (c *CriManager) RunPodSandbox(ctx context.Context, r *runtime.RunPodSandbox
 // and we should reconfigure it with network plugin which will make sure it reacquire its original network configuration,
 // like IP address.
 func (c *CriManager) StartPodSandbox(ctx context.Context, r *runtime.StartPodSandboxRequest) (*runtime.StartPodSandboxResponse, error) {
-	label := "start"
+	label := util_metrics.ActionStartLabel
 	metrics.PodActionsCounter.WithLabelValues(label).Inc()
 	defer func(start time.Time) {
 		metrics.PodActionsTimer.WithLabelValues(label).Observe(time.Since(start).Seconds())
@@ -385,7 +385,7 @@ func (c *CriManager) StartPodSandbox(ctx context.Context, r *runtime.StartPodSan
 // StopPodSandbox stops the sandbox. If there are any running containers in the
 // sandbox, they should be forcibly terminated.
 func (c *CriManager) StopPodSandbox(ctx context.Context, r *runtime.StopPodSandboxRequest) (*runtime.StopPodSandboxResponse, error) {
-	label := "stop"
+	label := util_metrics.ActionStopLabel
 	metrics.PodActionsCounter.WithLabelValues(label).Inc()
 	defer func(start time.Time) {
 		metrics.PodActionsTimer.WithLabelValues(label).Observe(time.Since(start).Seconds())
@@ -467,7 +467,7 @@ func (c *CriManager) StopPodSandbox(ctx context.Context, r *runtime.StopPodSandb
 // RemovePodSandbox removes the sandbox. If there are running containers in the
 // sandbox, they should be forcibly removed.
 func (c *CriManager) RemovePodSandbox(ctx context.Context, r *runtime.RemovePodSandboxRequest) (*runtime.RemovePodSandboxResponse, error) {
-	label := "remove"
+	label := util_metrics.ActionRemoveLabel
 	metrics.PodActionsCounter.WithLabelValues(label).Inc()
 	defer func(start time.Time) {
 		metrics.PodActionsTimer.WithLabelValues(label).Observe(time.Since(start).Seconds())
@@ -520,7 +520,7 @@ func (c *CriManager) RemovePodSandbox(ctx context.Context, r *runtime.RemovePodS
 
 // PodSandboxStatus returns the status of the PodSandbox.
 func (c *CriManager) PodSandboxStatus(ctx context.Context, r *runtime.PodSandboxStatusRequest) (*runtime.PodSandboxStatusResponse, error) {
-	label := "status"
+	label := util_metrics.ActionStatusLabel
 	metrics.PodActionsCounter.WithLabelValues(label).Inc()
 	defer func(start time.Time) {
 		metrics.PodActionsTimer.WithLabelValues(label).Observe(time.Since(start).Seconds())
@@ -600,7 +600,7 @@ func (c *CriManager) PodSandboxStatus(ctx context.Context, r *runtime.PodSandbox
 
 // ListPodSandbox returns a list of Sandbox.
 func (c *CriManager) ListPodSandbox(ctx context.Context, r *runtime.ListPodSandboxRequest) (*runtime.ListPodSandboxResponse, error) {
-	label := "list"
+	label := util_metrics.ActionListLabel
 	metrics.PodActionsCounter.WithLabelValues(label).Inc()
 	defer func(start time.Time) {
 		metrics.PodActionsTimer.WithLabelValues(label).Observe(time.Since(start).Seconds())
@@ -642,7 +642,7 @@ func (c *CriManager) ListPodSandbox(ctx context.Context, r *runtime.ListPodSandb
 
 // CreateContainer creates a new container in the given PodSandbox.
 func (c *CriManager) CreateContainer(ctx context.Context, r *runtime.CreateContainerRequest) (*runtime.CreateContainerResponse, error) {
-	label := "create"
+	label := util_metrics.ActionCreateLabel
 	metrics.ContainerActionsCounter.WithLabelValues(label).Inc()
 	defer func(start time.Time) {
 		metrics.ContainerActionsTimer.WithLabelValues(label).Observe(time.Since(start).Seconds())
@@ -766,7 +766,7 @@ func (c *CriManager) CreateContainer(ctx context.Context, r *runtime.CreateConta
 
 // StartContainer starts the container.
 func (c *CriManager) StartContainer(ctx context.Context, r *runtime.StartContainerRequest) (*runtime.StartContainerResponse, error) {
-	label := "start"
+	label := util_metrics.ActionStartLabel
 	metrics.ContainerActionsCounter.WithLabelValues(label).Inc()
 	defer func(start time.Time) {
 		metrics.ContainerActionsTimer.WithLabelValues(label).Observe(time.Since(start).Seconds())
@@ -786,7 +786,7 @@ func (c *CriManager) StartContainer(ctx context.Context, r *runtime.StartContain
 
 // StopContainer stops a running container with a grace period (i.e., timeout).
 func (c *CriManager) StopContainer(ctx context.Context, r *runtime.StopContainerRequest) (*runtime.StopContainerResponse, error) {
-	label := "stop"
+	label := util_metrics.ActionStopLabel
 	metrics.ContainerActionsCounter.WithLabelValues(label).Inc()
 	defer func(start time.Time) {
 		metrics.ContainerActionsTimer.WithLabelValues(label).Observe(time.Since(start).Seconds())
@@ -806,7 +806,7 @@ func (c *CriManager) StopContainer(ctx context.Context, r *runtime.StopContainer
 
 // RemoveContainer removes the container.
 func (c *CriManager) RemoveContainer(ctx context.Context, r *runtime.RemoveContainerRequest) (*runtime.RemoveContainerResponse, error) {
-	label := "remove"
+	label := util_metrics.ActionRemoveLabel
 	metrics.ContainerActionsCounter.WithLabelValues(label).Inc()
 	defer func(start time.Time) {
 		metrics.ContainerActionsTimer.WithLabelValues(label).Observe(time.Since(start).Seconds())
@@ -826,7 +826,7 @@ func (c *CriManager) RemoveContainer(ctx context.Context, r *runtime.RemoveConta
 
 // ListContainers lists all containers matching the filter.
 func (c *CriManager) ListContainers(ctx context.Context, r *runtime.ListContainersRequest) (*runtime.ListContainersResponse, error) {
-	label := "list"
+	label := util_metrics.ActionListLabel
 	metrics.ContainerActionsCounter.WithLabelValues(label).Inc()
 	defer func(start time.Time) {
 		metrics.ContainerActionsTimer.WithLabelValues(label).Observe(time.Since(start).Seconds())
@@ -863,7 +863,7 @@ func (c *CriManager) ListContainers(ctx context.Context, r *runtime.ListContaine
 
 // ContainerStatus inspects the container and returns the status.
 func (c *CriManager) ContainerStatus(ctx context.Context, r *runtime.ContainerStatusRequest) (*runtime.ContainerStatusResponse, error) {
-	label := "status"
+	label := util_metrics.ActionStatusLabel
 	metrics.ContainerActionsCounter.WithLabelValues(label).Inc()
 	defer func(start time.Time) {
 		metrics.ContainerActionsTimer.WithLabelValues(label).Observe(time.Since(start).Seconds())
@@ -1005,7 +1005,7 @@ func (c *CriManager) ContainerStatus(ctx context.Context, r *runtime.ContainerSt
 // ContainerStats returns stats of the container. If the container does not
 // exist, the call returns an error.
 func (c *CriManager) ContainerStats(ctx context.Context, r *runtime.ContainerStatsRequest) (*runtime.ContainerStatsResponse, error) {
-	label := "stats"
+	label := util_metrics.ActionStatsLabel
 	metrics.ContainerActionsCounter.WithLabelValues(label).Inc()
 	defer func(start time.Time) {
 		metrics.ContainerActionsTimer.WithLabelValues(label).Observe(time.Since(start).Seconds())
@@ -1030,7 +1030,7 @@ func (c *CriManager) ContainerStats(ctx context.Context, r *runtime.ContainerSta
 
 // ListContainerStats returns stats of all running containers.
 func (c *CriManager) ListContainerStats(ctx context.Context, r *runtime.ListContainerStatsRequest) (*runtime.ListContainerStatsResponse, error) {
-	label := "stats_list"
+	label := util_metrics.ActionStatsListLabel
 	metrics.ContainerActionsCounter.WithLabelValues(label).Inc()
 	defer func(start time.Time) {
 		metrics.ContainerActionsTimer.WithLabelValues(label).Observe(time.Since(start).Seconds())
@@ -1079,7 +1079,7 @@ func (c *CriManager) ListContainerStats(ctx context.Context, r *runtime.ListCont
 
 // UpdateContainerResources updates ContainerConfig of the container.
 func (c *CriManager) UpdateContainerResources(ctx context.Context, r *runtime.UpdateContainerResourcesRequest) (*runtime.UpdateContainerResourcesResponse, error) {
-	label := "update"
+	label := util_metrics.ActionUpdateLabel
 	metrics.ContainerActionsCounter.WithLabelValues(label).Inc()
 	defer func(start time.Time) {
 		metrics.ContainerActionsTimer.WithLabelValues(label).Observe(time.Since(start).Seconds())
@@ -1187,7 +1187,7 @@ func (c *CriManager) UpdateRuntimeConfig(ctx context.Context, r *runtime.UpdateR
 
 // Status returns the status of the runtime.
 func (c *CriManager) Status(ctx context.Context, r *runtime.StatusRequest) (*runtime.StatusResponse, error) {
-	label := "status"
+	label := util_metrics.ActionStatusLabel
 	metrics.RuntimeActionsCounter.WithLabelValues(label).Inc()
 	// record the time spent during image pull procedure.
 	defer func(start time.Time) {
@@ -1235,7 +1235,7 @@ func (c *CriManager) Status(ctx context.Context, r *runtime.StatusRequest) (*run
 
 // ListImages lists existing images.
 func (c *CriManager) ListImages(ctx context.Context, r *runtime.ListImagesRequest) (*runtime.ListImagesResponse, error) {
-	label := "list"
+	label := util_metrics.ActionListLabel
 	metrics.ImageActionsCounter.WithLabelValues(label).Inc()
 	// record the time spent during image pull procedure.
 	defer func(start time.Time) {
@@ -1279,7 +1279,7 @@ func (c *CriManager) ListImages(ctx context.Context, r *runtime.ListImagesReques
 // ImageStatus returns the status of the image. If the image is not present,
 // returns a response with ImageStatusResponse.Image set to nil.
 func (c *CriManager) ImageStatus(ctx context.Context, r *runtime.ImageStatusRequest) (*runtime.ImageStatusResponse, error) {
-	label := "status"
+	label := util_metrics.ActionStatusLabel
 	metrics.ImageActionsCounter.WithLabelValues(label).Inc()
 	defer func(start time.Time) {
 		metrics.ImageActionsTimer.WithLabelValues(label).Observe(time.Since(start).Seconds())
@@ -1314,7 +1314,7 @@ func (c *CriManager) PullImage(ctx context.Context, r *runtime.PullImageRequest)
 	// TODO: authentication.
 	imageRef := r.GetImage().GetImage()
 
-	label := "pull"
+	label := util_metrics.ActionPullLabel
 	metrics.ImageActionsCounter.WithLabelValues(label).Inc()
 	// record the time spent during image pull procedure.
 	defer func(start time.Time) {
@@ -1348,7 +1348,7 @@ func (c *CriManager) PullImage(ctx context.Context, r *runtime.PullImageRequest)
 
 // RemoveImage removes the image.
 func (c *CriManager) RemoveImage(ctx context.Context, r *runtime.RemoveImageRequest) (*runtime.RemoveImageResponse, error) {
-	label := "remove"
+	label := util_metrics.ActionRemoveLabel
 	metrics.ImageActionsCounter.WithLabelValues(label).Inc()
 	defer func(start time.Time) {
 		metrics.ImageActionsTimer.WithLabelValues(label).Observe(time.Since(start).Seconds())
@@ -1371,7 +1371,7 @@ func (c *CriManager) RemoveImage(ctx context.Context, r *runtime.RemoveImageRequ
 
 // ImageFsInfo returns information of the filesystem that is used to store images.
 func (c *CriManager) ImageFsInfo(ctx context.Context, r *runtime.ImageFsInfoRequest) (*runtime.ImageFsInfoResponse, error) {
-	label := "info"
+	label := util_metrics.ActionInfoLabel
 	metrics.ImageActionsCounter.WithLabelValues(label).Inc()
 	defer func(start time.Time) {
 		metrics.ImageActionsTimer.WithLabelValues(label).Observe(time.Since(start).Seconds())
@@ -1405,7 +1405,7 @@ func (c *CriManager) ImageFsInfo(ctx context.Context, r *runtime.ImageFsInfoRequ
 
 // RemoveVolume removes the volume.
 func (c *CriManager) RemoveVolume(ctx context.Context, r *runtime.RemoveVolumeRequest) (*runtime.RemoveVolumeResponse, error) {
-	label := "remove"
+	label := util_metrics.ActionRemoveLabel
 	metrics.VolumeActionsCounter.WithLabelValues(label).Inc()
 	defer func(start time.Time) {
 		metrics.VolumeActionsTimer.WithLabelValues(label).Observe(time.Since(start).Seconds())
